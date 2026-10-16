@@ -1340,6 +1340,23 @@ func TestServiceAccountsByOIDCClaims(t *testing.T) {
 				"sub/baz",
 			},
 		},
+		{
+			name: "ServiceAccount has scalar and array new style claim values",
+			sa: &corev1.ServiceAccount{
+				ObjectMeta: metav1.ObjectMeta{
+					Annotations: map[string]string{
+						rbacapi.AnnotationKeyOIDCClaims: `{
+							"groups": "kargo-admins",
+							"email": ["foo@bar.com"]
+						}`,
+					},
+				},
+			},
+			expected: []string{
+				"email/foo@bar.com",
+				"groups/kargo-admins",
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
